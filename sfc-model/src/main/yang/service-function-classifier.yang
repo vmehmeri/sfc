@@ -1,0 +1,81 @@
+module service-function-classifier {
+  yang-version 1;
+
+  namespace "urn:cisco:params:xml:ns:yang:sfc-scf";
+
+  prefix sfc-scf;
+
+  // import ietf-acl {prefix "ietf-acl";}
+
+  organization "Cisco Systems, Inc.";
+  contact "Reinaldo Penno <repenno@cisco.com>";
+
+  description
+    "This module contains a collection of YANG definitions for
+     managing service classification functions.";
+
+  revision 2014-07-01 {
+    description
+      "Revised based on Opendaylight Project feedback";
+    reference "https://tools.ietf.org/html/draft-penno-sfc-yang";
+  }
+
+  grouping attachment-point {
+    description
+      "Reusable group of all possible attachment point types";
+    choice attachment-point-type {
+      description
+        "Provides a choice between access list
+         attachment point types";
+      case bridge {
+        leaf bridge {
+          type string;
+          description
+            "OVS bridge as an attachment point";
+        }
+      }
+      case interface {
+        leaf interface {
+          type string;
+          description
+            "interface name as attachment point";
+        }
+      }
+    }
+  }
+
+  container service-function-classifiers {
+    description
+    "Classifier container which represents the ACL being applied,
+     attachment point and the chain associated with that ACL.";
+    list service-function-classifier {
+      key "name";
+      description
+        "A list that holds all service function classifiers";
+      leaf name {
+        type string;
+         description
+         "Classification function name";
+      }
+      leaf access-list {
+        type string;
+        description
+          "The ACL name associated with this classifier";
+      }
+
+      list scl-service-function-forwarder {
+        key "name";
+        description
+          "The classifier will be attached to these SFFs";
+        leaf name {
+          type string;
+          description
+            "The classifier will be attached to this SFF";
+        }
+        uses attachment-point {
+          description "Classifier attachment point";
+        }
+      }
+    }
+  }
+}
